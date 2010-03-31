@@ -132,8 +132,10 @@ from within the accessors. In fact it is quite simple:
         }
     }
 
-Note that it is also perfectly legal to call `get()` from the setter
-or `set(x)` from the getter.
+It is also perfectly legal to call `get()` from the setter or `set(x)`
+from the getter. When using any form of set() or get() inside your
+accessor methods, you must be very careful that you don't infinitely
+recurse.
 
 
 What about speed?!
@@ -206,6 +208,9 @@ method. Again the solution is to just use `this` to qualify the name.
 	set: func(.contents) { this contents = contents - 1 }
 	get: func -> Int { contents }
     }
+
+The `set()` and `get()` calling is also dangerous because of potential
+for infinite loops. They should be avoided as much as possible, usually.
 
 These issues are easily avoided and don't pose a real problem, but
 they are documented here so at least you know what's going on if you
