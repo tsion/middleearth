@@ -36,11 +36,11 @@ method. Here is a simple example of a property:
     Person: class
         age: Int {
             set(value) {
-	        age = value
-	    }
-	    get {
-	        age
-	    }
+                age = value
+            }
+            get {
+                age
+            }
         }
     }
 
@@ -81,8 +81,8 @@ A property with a setter and no getter is just the opposite:
 
     foo: Int {
         set(value) {
-	    doSomething(foo)
-	}
+            doSomething(foo)
+        }
     }
 
 If you are very perceptive, you might already be wondering how to
@@ -93,7 +93,7 @@ direct-access setter or getter.
 
     name: String {
         set
-	get
+        get
     }
     
     // The above example is exactly equivalent to this:
@@ -101,10 +101,10 @@ direct-access setter or getter.
     
     age: Int {
         set(=age) {
-	    if(age > 100)
-	        "Wow, you're so... elderly!" println()
-	}
-	get
+            if(age > 100)
+                "Wow, you're so... elderly!" println()
+        }
+        get
     }
 
 A final characteristic of properties you should know about is how they
@@ -120,16 +120,16 @@ from within the accessors. In fact it is quite simple:
     Dog: class {
         fleas: Int {
             set(value) {
-	        if(value < 10) {
-		    // Because dogs have twice as many fleas than what
+                if(value < 10) {
+                    // Because dogs have twice as many fleas than what
                     // you counted :(
-		    set(value * 2)
-		} else {
-		    fleas = value
-		}
-	    }
-	    get
-	}
+                    set(value * 2)
+                } else {
+                    fleas = value
+                }
+            }
+            get
+        }
     }
 
 Note that it is also perfectly legal to call `get()` from the setter
