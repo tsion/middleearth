@@ -1,7 +1,7 @@
-Author:  Scott Olson (scott_)
-Created: 2010-03-30
-Type:    Feature
-Status:  Draft
+Author:  Scott Olson (scott_)  
+Created: 2010-03-30  
+Type:    Feature  
+Status:  Draft  
 
 Properties
 ==========
