@@ -152,7 +152,7 @@ even I was long fooled by the proponents of this language, but a flaw
 as prodigious as this could not escape the scrutiny of a mind with too
 much time on its hands. The flaw runs deep and I am now convinced that
 the only way to save ooc is to have every ooc user port his code to a
-more operator-complete.
+more operator-complete language.
 
 
 Concerns
