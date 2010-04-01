@@ -140,7 +140,8 @@ for your reference.
 
 Be right back.
 
-Okay, hello again. I've got my crowbar-proof jacket on. No reason.
+Okay, hello again. I've got my crowbar-proof jacket
+on. [No reason](http://www.spifftastic.net/skitch/perl-20100322-130537.jpg).
 
 
 Rationale
