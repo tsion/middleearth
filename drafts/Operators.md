@@ -149,8 +149,9 @@ Rationale
 I got involved in the ooc community as soon as I learned about it, and
 even I was long fooled by the proponents of this language, but a flaw
 as prodigious as this could not escape the scrutiny of a mind with too
-much time on its hands. I am now convinced that the only way to save
-ooc is to have every single ooc user port all his code to Perl 6.
+much time on its hands. The flaw runs deep and I am now convinced that
+the only way to save ooc is to have every ooc user port his code to a
+more operator-complete.
 
 
 Concerns
