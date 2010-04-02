@@ -48,9 +48,9 @@ verbose, and having multiple forms to perform one task is sure to
 cause inconsistency all across the ooc world.
 
 The problem runs deeper than that. A user attempting to perform string
-replication to write "PENIS" 1,000,000 times or maybe spam an IRC
-channel with the phrase "you are what already forever seldom yes",
-simple tasks in most languages, would be hard pressed to find the
+replication to write "I am a duck!" 1,000,000 times or maybe spam an IRC
+channel with the phrase "you are what already forever seldom yes" -
+simple tasks in most languages - would be hard pressed to find the
 solution in ooc. He would of course assume the usual operator for
 string replication: `x`. (You can remember this operator with the
 mnemonic "x means muliplication in arithmetic but not in programming
