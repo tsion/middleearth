@@ -137,6 +137,19 @@ from the getter. When using any form of set() or get() inside your
 accessor methods, you must be very careful that you don't infinitely
 recurse.
 
+Properties can also user extern setter or getter functions:
+
+    Foo: cover from struct foo {
+        bar: Int {
+            set: extern(Foo_setBar)
+            get: extern(Foo_getBar)
+        }
+    }
+
+In this case, the set function must match
+`void Foo_setBar(struct foo, int)` and the get function must match
+`int Foo_getBar(struct foo)`. You can mix and match extern and
+non-extern setters and getters in any way.
 
 What about speed?!
 ------------------
