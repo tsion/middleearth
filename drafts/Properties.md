@@ -195,10 +195,10 @@ you could always just use a different name for the argument instead...
 
     width: Int {
         set(width) {
-	    calculatePerimeter(width, height)
-	    this width = width
-	}
-	get
+            calculatePerimeter(width, height)
+            this width = width
+        }
+        get
     }
 
 There, it shouldn't be any trouble. (Another option would be to use
@@ -209,17 +209,17 @@ method. Again the solution is to just use `this` to qualify the name.
 
     SubtractiveBox: class {
         contents: Int {
-	    set
-	    get {
-	        // calling 'set(12)' here would call the setter for
-		// contents like usual. Calling 'this set(12)' would
-		// call the method on SubtractiveBox.
-		set(contents - 1)
-		contents
-	    }
+            set
+            get {
+                // calling 'set(12)' here would call the setter for
+                // contents like usual. Calling 'this set(12)' would
+                // call the method on SubtractiveBox.
+                set(contents - 1)
+                contents
+            }
 	
-	set: func(.contents) { this contents = contents - 1 }
-	get: func -> Int { contents }
+        set: func(.contents) { this contents = contents - 1 }
+        get: func -> Int { contents }
     }
 
 The `set()` and `get()` calling is also dangerous because of potential
