@@ -148,7 +148,7 @@ which calls the lower-level method `signal` and aborts the program if
 the condition isn't handled. You could write `parseLogEntry` like
 this, eliding the details of actually parsing a log entry:
 
-    parseLogEntry: func (text: String) {
+    parseLogEntry: func (text: String) -> LogEntry {
         if(wellFormedLogEntry?(text)) {
             LogEntry new(text)
         } else {
@@ -388,7 +388,7 @@ argument. One simply returns the value it's passed as the return value
 of `parseLogEntry`, while the other tries to parse its argument in the
 place of the original log entry.
 
-    parseLogEntry: func (text: String) {
+    parseLogEntry: func (text: String) -> LogEntry {
         if(wellFormedLogEntry?(text)) {
             LogEntry new(text)
         } else {
