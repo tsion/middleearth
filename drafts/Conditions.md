@@ -309,6 +309,14 @@ stashing it away somewhere.
 Thus, the path from the top-level function, `logAnalyser`, to
 `parseLogEntry`, which actually signals an error, is as follows:
 
+    logAnalyzer
+         |
+         `----> analyzeLog
+                    |
+                    `----> parseLogFile
+                                 |
+                                 `----> parseLogEntry
+
 Assuming you always want to skip malformed log entries, you could
 change this function to establish a condition handler that invokes the
 `skipLogEntry` restart for you. However, you can't use try/catch to
