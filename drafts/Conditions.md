@@ -202,7 +202,7 @@ name.
 One way to handle the `MalformedLogEntryError` signaled by
 `parseLogEntry` in its caller, `parseLogFile`, would be to skip the
 malformed entry. In the following function, the try/catch expression
-will either collect the value returned by parse-log-entry or do
+will either collect the value returned by `parseLogEntry` or do
 nothing if a `MalformedLogEntryError` is signaled.
 
     parseLogFile: func (file: File) -> ArrayList<LogEntry> {
