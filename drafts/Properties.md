@@ -137,6 +137,19 @@ from the getter. When using any form of set() or get() inside your
 accessor methods, you must be very careful that you don't infinitely
 recurse.
 
+Properties can also user extern setter or getter functions:
+
+    Foo: cover from struct foo {
+        bar: Int {
+            set: extern(Foo_setBar)
+            get: extern(Foo_getBar)
+        }
+    }
+
+In this case, the set function must match
+`void Foo_setBar(struct foo, int)` and the get function must match
+`int Foo_getBar(struct foo)`. You can mix and match extern and
+non-extern setters and getters in any way.
 
 What about speed?!
 ------------------
@@ -182,10 +195,10 @@ you could always just use a different name for the argument instead...
 
     width: Int {
         set(width) {
-	    calculatePerimeter(width, height)
-	    this width = width
-	}
-	get
+            calculatePerimeter(width, height)
+            this width = width
+        }
+        get
     }
 
 There, it shouldn't be any trouble. (Another option would be to use
@@ -196,17 +209,17 @@ method. Again the solution is to just use `this` to qualify the name.
 
     SubtractiveBox: class {
         contents: Int {
-	    set
-	    get {
-	        // calling 'set(12)' here would call the setter for
-		// contents like usual. Calling 'this set(12)' would
-		// call the method on SubtractiveBox.
-		set(contents - 1)
-		contents
-	    }
+            set
+            get {
+                // calling 'set(12)' here would call the setter for
+                // contents like usual. Calling 'this set(12)' would
+                // call the method on SubtractiveBox.
+                set(contents - 1)
+                contents
+            }
 	
-	set: func(.contents) { this contents = contents - 1 }
-	get: func -> Int { contents }
+        set: func(.contents) { this contents = contents - 1 }
+        get: func -> Int { contents }
     }
 
 The `set()` and `get()` calling is also dangerous because of potential
