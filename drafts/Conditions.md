@@ -221,7 +221,7 @@ then the catch will be invoked, which in this case just ignores it.
 
 This version of `parseLogFile` has one serious deficiency: it's doing
 too much. As its name suggests, the job of `parseLogFile` is to parse
-the file and produce a list of log-entry objects; if it can't, it's
+the file and produce a list of `LogEntry` objects; if it can't, it's
 not its place to decide what to do instead. What if you want to use
 `parseLogFile` in an application that wants to tell the user that the
 log file is corrupted or one that wants to recover from malformed
