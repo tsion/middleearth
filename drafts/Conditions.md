@@ -1,3 +1,8 @@
+(This is a shameless copy of
+http://www.gigamonkeys.com/book/beyond-exception-handling-conditions-and-restarts.html
+translated to psuedo-ooc that hopefully will lose the 'psuedo'
+modifier soon!)
+
 # Beyond Exception Handling: Conditions and Restarts
 
 One of ooc's great features is its condition system. It serves a
