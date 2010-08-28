@@ -357,7 +357,7 @@ change the handler to this:
         } handle MalformedLogEntryError {
             restart := findRestart("skipLogEntry")
             if(restart)
-                invokeRestart("skipLogEntry")
+                invokeRestart(restart)
         }
 
 `findRestart` looks for a restart with a given name and returns an
