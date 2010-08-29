@@ -253,15 +253,17 @@ form of try/restart is quite similar to a try/catch except the names
 of restarts are just names, not necessarily the names of condition
 classes. In general, a restart name should describe the action the
 restart takes. In `parseLogFile`, you can call the restart
-`skipLogEntry` since that's what it does. The new version will look
+`SkipLogEntry` since that's what it does. The new version will look
 like this:
+
+    SkipLogEntry: class extends Restart {}
 
     parseLogFile: func (file: File) -> ArrayList<LogEntry> {
         entries := ArrayList<LogEntry> new()
         file eachLine(|line|
             try {
                 entries add(parseLogEntry(line))
-            } restart "skipLogEntry" {}
+            } restart SkipLogEntry {}
         )
         entries
     }
@@ -269,19 +271,19 @@ like this:
 If you invoke this version of `parseLogFile` on a log file containing
 corrupted entries, it won't handle the error; the program will
 abort. To avoid this, you can establish a condition handler that
-invokes the `skipLogEntry` restart automatically.
+invokes the `SkipLogEntry` restart automatically.
 
 The advantage of establishing a restart rather than having
 `parseLogFile` handle the error directly is it makes `parseLogFile`
 usable in more situations. The higher-level code that invokes
-`parseLogFile` doesn't have to invoke the `skipLogEntry` restart. It
+`parseLogFile` doesn't have to invoke the `SkipLogEntry` restart. It
 can choose to handle the error at a higher level. Or, as I'll show in
 the next section, you can add restarts to `parseLogEntry` to provide
 other recovery strategies, and then condition handlers can choose
 which strategy they want to use.
 
 But before I can talk about that, you need to see how to set up a
-condition handler that will invoke the `skipLogEntry` restart. You can
+condition handler that will invoke the `SkipLogEntry` restart. You can
 set up the handler anywhere in the chain of calls leading to
 `parseLogFile`. This may be quite high up in your application, not
 necessarily in `parseLogFile`'s direct caller. For instance, suppose
@@ -319,7 +321,7 @@ Thus, the path from the top-level function, `logAnalyser`, to
 
 Assuming you always want to skip malformed log entries, you could
 change this function to establish a condition handler that invokes the
-`skipLogEntry` restart for you. However, you can't use try/catch to
+`SkipLogEntry` restart for you. However, you can't use try/catch to
 establish the condition handler because then the stack would be
 unwound to the function where the try/catch appears. Instead, you need
 to use the try/handle expression. The basic form of try/handle is as
@@ -336,46 +338,44 @@ follows:
 An important difference between try/handle and try/catch is that the
 handler function bound by try/handle will be run without unwinding the
 stack--the flow of control will still be in the call to
-`parseLogEntry` when this function is called. The use of
-`invokeRestart` will find and invoke the most recently bound restart
-with the given name. So you can add a handler to `logAnalyser` that
-will invoke the `skipLogEntry` restart established in `parseLogFile`
-like this:
+`parseLogEntry` when this function is called. Calling `invoke` will
+find and invoke the most recently bound restart of the given class. So
+you can add a handler to `logAnalyser` that will invoke the
+`SkipLogEntry` restart established in `parseLogFile` like this:
 
     logAnalyzer: func {
         try {
             findAllLogs() each(|log| analyzeLog(log))
         } handle MalformedLogEntryError {
-            invokeRestart("skipLogEntry")
+            SkipLogEntry invoke()
         }
     }
 
-In this try/handle, the handler invokes the restart `skipLogEntry`.
+In this try/handle, the handler invokes the restart `SkipLogEntry`.
 
 As written, the `MalformedLogEntryError` handler assumes that a
-`skipLogEntry` restart has been established. If a
+`SkipLogEntry` restart has been established. If a
 `MalformedLogEntryError` is ever signaled by code called from
-`logAnalyser` without a `skipLogEntry` having been established, the
-call to `invokeRestart` will signal a `ControlError` when it fails to
-find the `skipLogEntry` restart. If you want to allow for the
-possibility that a `MalformedLogEntryError` might be signaled from
-code that doesn't have a `skipLogEntry` restart established, you could
-change the handler to this:
+`logAnalyser` without a `SkipLogEntry` having been established, the
+call to `invoke` will signal a `ControlError` when it fails to find
+the `SkipLogEntry` restart. If you want to allow for the possibility
+that a `MalformedLogEntryError` might be signaled from code that
+doesn't have a `SkipLogEntry` restart established, you could change
+the handler to this:
 
         } handle MalformedLogEntryError {
-            restart := findRestart("skipLogEntry")
+            restart := SkipLogEntry find()
             if(restart)
-                invokeRestart(restart)
+                restart invoke()
         }
 
-`findRestart` looks for a restart with a given name and returns an
-object representing the restart if the restart is found and `null` if
-not. You can invoke the restart by passing the restart object to
-`invokeRestart`. Thus, when `skipLogEntry` is bound with try/handle,
-it will handle the condition by invoking the `skipLogEntry` restart if
-one is available and otherwise will return normally, giving other
-condition handlers, bound higher on the stack, a chance to handle the
-condition.
+`find` looks for a restart with a given name and returns an object
+representing the restart if the restart is found and `null` if
+not. You can invoke the restart by calling `invoke` on the restart
+object. Thus, when `SkipLogEntry` is bound with try/handle, it will
+handle the condition by invoking the `SkipLogEntry` restart if one is
+available and otherwise will return normally, giving other condition
+handlers, bound higher on the stack, a chance to handle the condition.
 
 ## Providing Multiple Restarts
 
@@ -389,9 +389,9 @@ other applications may have some way to repair a malformed entry and
 may want a way to pass the fixed entry back to `parseLogEntry`.
 
 To allow more complex recovery protocols, restarts can take arbitrary
-arguments, which are passed in the call to `invokeRestart`. You can
-provide support for both the recovery strategies I just mentioned by
-adding two restarts to `parseLogEntry`, each of which takes a single
+arguments, which are passed in the call to `invoke`. You can provide
+support for both the recovery strategies I just mentioned by adding
+two restarts to `parseLogEntry`, each of which takes a single
 argument. One simply returns the value it's passed as the return value
 of `parseLogEntry`, while the other tries to parse its argument in the
 place of the original log entry.
@@ -402,15 +402,15 @@ place of the original log entry.
         } else {
             try {
                 MalformedLogEntryError new(text) throw()
-            } restart "useValue" (value: LogEntry) {
+            } restart UseValue (value: LogEntry) {
                 value
-            } restart "reparseEntry" (fixedText: String) {
+            } restart ReparseEntry (fixedText: String) {
                 parseLogEntry(fixedText)
             }
         }
     }
 
-The name `useValue` is a standard name for this kind of restart.
+The name `UseValue` is a standard name for this kind of restart.
 
 If you wanted to change the policy on malformed entries to one that
 created an instance of `MalformedLogEntry`, you could change
@@ -421,21 +421,21 @@ class):
         try {
             findAllLogs() each(|log| analyzeLog(log))
         } handle e: MalformedLogEntryError {
-            invokeRestart("useValue", MalformedLogEntry new(e text))
+            UseValue invoke(MalformedLogEntry new(e text))
         }
     }
 
 You could also have put these new restarts into `parseLogFile` instead
 of `parseLogEntry`. However, you generally want to put restarts in the
 lowest-level code possible. It wouldn't, though, be appropriate to
-move the `skipLogEntry` restart into `parseLogEntry` since that would
+move the `SkipLogEntry` restart into `parseLogEntry` since that would
 cause `parseLogEntry` to sometimes return normally with `null`, the
 very thing you started out trying to avoid. And it'd be an equally bad
-idea to remove the `skipLogEntry` restart on the theory that the
-condition handler could get the same effect by invoking the `useValue`
+idea to remove the `SkipLogEntry` restart on the theory that the
+condition handler could get the same effect by invoking the `UseValue`
 restart with `null` as the argument; that would require the condition
 handler to have intimate knowledge of how the `parseLogFile` works. As
-it stands, the `skipLogEntry` is a properly abstracted part of the
+it stands, the `SkipLogEntry` is a properly abstracted part of the
 log-parsing API.
 
 ## Other Uses for Conditions
@@ -468,7 +468,7 @@ different kind of protocol built on the condition system. Like
 `throw`, `warn` calls `signal` to signal a condition. But if `signal`
 returns, `warn` doesn't invoke the debugger--it prints the condition
 to stderr and returns, allowing its caller to proceed. `warn` also
-establishes a restart, `muffleWarning`, around the call to `signal`
+establishes a restart, `MuffleWarning`, around the call to `signal`
 that can be used by a condition handler to make `warn` return without
 printing anything. Of course, a condition signaled with `warn` could
 also be handled in some other way--a condition handler could "promote"
